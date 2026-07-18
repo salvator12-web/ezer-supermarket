@@ -1,0 +1,21 @@
+.stats-bar {
+  background: var(--surface-2);
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 32px 20px;
+}
+
+.stat-item { display: flex; align-items: center; gap: 12px; }
+.stat-item i { font-size: 1.6rem; color: var(--text-accent); }
+.stat-value { font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+.stat-label { font-size: 0.8rem; margin-top: 2px; }
+
+@media (max-width: 720px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
