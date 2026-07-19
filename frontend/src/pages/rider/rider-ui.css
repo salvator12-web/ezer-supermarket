@@ -1,1 +1,22 @@
-
+.order-card {
+  background: var(--surface-2); border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+  padding: 16px; margin-bottom: 12px;
+}
+.order-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.order-card-id { font-weight: 700; }
+.order-card-address { display: flex; gap: 6px; align-items: flex-start; color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 8px; }
+.order-card-address i { margin-top: 2px; flex-shrink: 0; }
+.order-card-items { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+.order-card-footer { display: flex; justify-content: space-between; align-items: center; }
+.order-card-total { font-weight: 700; }
+.rider-empty { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+.rider-empty i { font-size: 2rem; display: block; margin-bottom: 10px; opacity: 0.6; }
+.rider-loading { text-align: center; padding: 48px 16px; color: var(--text-muted); }
+.status-progress { display: flex; gap: 6px; margin: 14px 0; }
+.status-progress-step { flex: 1; height: 4px; border-radius: 2px; background: var(--surface-1); }
+.status-progress-step.done { background: var(--fill-accent); }
+.earnings-banner {
+  background: var(--bg-success); color: var(--text-success); border: 0.5px solid var(--border-success);
+  border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; text-align: center;
+}
+.earnings-banner .amount { font-size: 1.4rem; font-weight: 700; }
