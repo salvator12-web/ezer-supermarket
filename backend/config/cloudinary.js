@@ -78,4 +78,22 @@ async function destroyAsset(publicId, resourceType = "image") {
   }
 }
 
-module.exports = { signParams, createUploadSignature, destroyAsset };
+// Ezer stores the Cloudinary secure_url directly on the product doc
+// (imageURL), not a separate public_id — so before we can destroy an
+// asset we need to recover its public_id from that URL.
+// e.g. https://res.cloudinary.com/<cloud>/image/upload/v169.../ezer-products/abc123.jpg
+//   -> "ezer-products/abc123"
+function extractPublicIdFromUrl(url) {
+  if (!url || typeof url !== "string") return null;
+  const uploadMarker = "/upload/";
+  const uploadIndex = url.indexOf(uploadMarker);
+  if (uploadIndex === -1) return null;
+
+  let rest = url.slice(uploadIndex + uploadMarker.length).split("?")[0];
+  rest = rest.replace(/^v\d+\//, ""); // drop the version segment, e.g. v1699999999/
+
+  const lastDot = rest.lastIndexOf(".");
+  return lastDot === -1 ? rest : rest.slice(0, lastDot);
+}
+
+module.exports = { signParams, createUploadSignature, destroyAsset, extractPublicIdFromUrl };
