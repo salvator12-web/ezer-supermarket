@@ -1,5 +1,20 @@
 const Product = require("../models/Product");
 const { CATEGORIES } = require("../models/Product");
+const { destroyAsset, extractPublicIdFromUrl } = require("../config/cloudinary");
+
+// Best-effort Cloudinary cleanup — never lets a destroy failure block the
+// request that triggered it (the product change already succeeded/is
+// succeeding in Mongo by the time this runs).
+async function destroyImageIfAny(imageURL) {
+  if (!imageURL) return;
+  const publicId = extractPublicIdFromUrl(imageURL);
+  if (!publicId) return;
+  try {
+    await destroyAsset(publicId);
+  } catch (err) {
+    console.error("Cloudinary cleanup failed:", err);
+  }
+}
 
 // GET /api/products?category=&search=  (public)
 async function list(req, res) {
@@ -39,8 +54,17 @@ async function create(req, res) {
 
 // PUT /api/products/:id  (admin)
 async function update(req, res) {
+  const existing = await Product.findById(req.params.id);
+  if (!existing) return res.status(404).json({ error: "Product not found" });
+  const oldImageURL = existing.imageURL;
+
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-  if (!product) return res.status(404).json({ error: "Product not found" });
+
+  const imageChanged = Object.prototype.hasOwnProperty.call(req.body, "imageURL") && req.body.imageURL !== oldImageURL;
+  if (imageChanged) {
+    await destroyImageIfAny(oldImageURL);
+  }
+
   res.json(product);
 }
 
@@ -48,6 +72,7 @@ async function update(req, res) {
 async function remove(req, res) {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) return res.status(404).json({ error: "Product not found" });
+  await destroyImageIfAny(product.imageURL);
   res.json({ ok: true });
 }
 
